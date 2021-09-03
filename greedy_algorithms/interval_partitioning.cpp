@@ -4,8 +4,7 @@
 using namespace std;
 
 struct classRoomLastFinishTime {
-    int classRoomNumber;
-    int lastFinishTime;
+    int classRoomNumber, lastFinishTime;
 };
 
 /* Find the partition, i.e, where the pivot element should be in the array when performing quicksort */
