@@ -47,16 +47,17 @@ void heapifyUp(vector<classRoomLastFinishTime> &priorityQueue,int index) {
 /* Correct the heap from up to down */
 void heapifyDown(vector<classRoomLastFinishTime> &priorityQueue, int index) {
     int sizeOfQueue = priorityQueue.size();
-    int minChildLastFinishTime, minChildIndex;
-    if((2*index +1) > sizeOfQueue)
+    int minChildIndex;
+    if((2*index +1) > (sizeOfQueue-1))
         return;
-    else if((2*index +1) < sizeOfQueue)  {
-        minChildLastFinishTime = min(priorityQueue[2*index+1].lastFinishTime, 
-                                        priorityQueue[2*index+2].lastFinishTime);
-        minChildIndex = minChildLastFinishTime == priorityQueue[2*index+1].lastFinishTime?
-                            2*index+1: 2*index+2; 
+    else if((2*index +1) < (sizeOfQueue-1)) {
+        if(priorityQueue[2*index+1].lastFinishTime < priorityQueue[2*index+2].lastFinishTime) {
+            minChildIndex = 2*index+1;
+        } else if(priorityQueue[2*index+1].lastFinishTime > priorityQueue[2*index+2].lastFinishTime){
+            minChildIndex = 2*index+2;
+        }
     }
-    else 
+    else  
         minChildIndex = 2*index + 1;
     if(priorityQueue[index].lastFinishTime > priorityQueue[minChildIndex].lastFinishTime) {
         swap(priorityQueue[index], priorityQueue[minChildIndex]);
@@ -105,8 +106,6 @@ int main() {
     vector<int> classRoomPriorityQueue;
     vector<int> startTimes = {0,4,5,2,0,6,2,6,4,0};
     vector<int> finishTimes = {2,6,8,4,4,8,5,8,6,2};
-    int minTime =0;
-    int maxTime = 8;
     sortStartTimesandSwapFinishTimes(startTimes, finishTimes, 0, 9);
     vector<vector<vector<int> > > classRoomWithLectures = assignLecturesToClassrooms(startTimes, finishTimes);
     for(int i=0;i<classRoomWithLectures.size();i++) {
