@@ -1,30 +1,33 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<iostream>
 #include<queue>
-#define N 4
+#include<vector>
+#define N 3
 using namespace std;
 
-void stable_matching(int mPreferences[N][N], int wPreferences[N][N]) {
+void stable_matching(vector<vector<int>> mPreferences, vector<vector<int>> wPreferences) {
     
-    /* Keep track of all the husbands and the wives */
-    int husband[N], wife[N], proposalCount[N], wInversePreferenes[N][N];
+    /* 
+    Keep track of the husbands and the wives. Set to -1 as no one has a  
+    partner at first. Also, set the proposal count to 0 for all men.
+    */
+    vector<int> husband(N,-1), wife(N,-1), proposalCount(N,0);
+    vector<vector<int>> wInversePreferenes(N,vector<int>(N));
     queue<int> freeMen;
     
     /* Initially, all men are free, so freeMenCount is N and all men are in the
        freeMen queue */
-    for(int i=0;i<4;i++) 
+    for(int i=0;i<N;i++) 
         freeMen.push(i);
-
-    /* All women and men have no partners at first as no man has made a proposal yet*/
-    memset(wife, -1, sizeof(wife));
-    memset(husband, -1, sizeof(husband));
-    memset(proposalCount, 0, sizeof(proposalCount));
 
     /* Create an inverse of the womens' preference list for each woman */ 
     for(int i=0;i<N;i++)
         for(int j=0;j<N;j++)
             wInversePreferenes[i][wPreferences[i][j]] = j;
+    
+    int totalProposalCount =0;
 
     while(!freeMen.empty()) {
         /* Choose free man */
@@ -36,7 +39,7 @@ void stable_matching(int mPreferences[N][N], int wPreferences[N][N]) {
         proposed to.
         */
 
-        while (proposalCount[m] <4 && wife[m] == -1)
+        while (proposalCount[m] <N && wife[m] == -1)
         {   
             /* 
             Get the free mans' highest preference that he hasn't proposed to yet
@@ -62,13 +65,14 @@ void stable_matching(int mPreferences[N][N], int wPreferences[N][N]) {
             */
                 husband[woman] = m;
                 wife[m] = woman;
+                wife[currentHusband] = -1;
                 freeMen.pop();
                 freeMen.push(currentHusband);
             }
             proposalCount[m]++;
+            totalProposalCount++;
         }
     }
-
     printf("Husband\tWife \n");
     for(int i =0;i<N;i++)
         printf ("%d \t %d'\n", i,wife[i]);    
@@ -76,17 +80,14 @@ void stable_matching(int mPreferences[N][N], int wPreferences[N][N]) {
 
 int main() {
     /* Women preferences */
-    int wPreferences[N][N] = {{0, 1, 2, 3},
-        {0, 1, 2, 3},
-        {0, 1, 2, 3},
-        {0, 1, 2, 3}};
+    vector<vector<int>> wPreferences = {{1,2,0},
+        {0,1,2},
+        {2,0,1}};
 
     /* Men preferences */
-    int mPreferences[N][N] = { {3, 1, 2, 0},
-        {1, 0, 2, 3},
-        {0, 1, 2, 3},
-        {0, 1, 2, 3},
-    };
+    vector<vector<int>> mPreferences = { {0,1,2},
+        {1,0,2},
+        {1,0,2}};
     stable_matching(mPreferences,wPreferences);
     return 0;
 }
