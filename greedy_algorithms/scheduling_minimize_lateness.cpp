@@ -28,10 +28,16 @@ void sortDeadlinesAndSwapJobTimes(vector<int> &deadlines, vector<int> &jobTimes,
     }   
 }
 
+/* Schedule the jobs in the sorted order of deadlines. */ 
 vector<vector<int>> scheduleJobs(vector<int> deadlines, vector<int> jobTimes) {
+    /*Since there are no jobs at first, both the start time and finish time are 0 */
     int startTime = 0;
     int finishTime = 0;
     vector<vector<int>> scheduledJobs;
+    /* 
+    Update the finishTime for each job, then push the start time and finish time, then 
+    update the start time
+    */
     for(int i=0;i<deadlines.size();i++) {
         finishTime+= jobTimes[i];
         scheduledJobs.push_back({startTime, finishTime});
