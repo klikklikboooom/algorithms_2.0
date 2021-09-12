@@ -1,6 +1,6 @@
-#include<iostream>
 #include<vector>
-#define VERTICES 9
+#include<iostream>
+
 using namespace std;
 
 struct neighbors{
@@ -54,42 +54,44 @@ vector<int> getMin(vector<vector<int>> &priorityQueue) {
     return minItem;
 }
 
-/* Print the shortest path to each node from the source */
-void shortestPathToEachNode(graph G, int sourceNode) {
+void primsMinimumSpanningTree (graph G, int sourceNode) {
     int numberOfNodes = G.nvertices;
     vector<vector<neighbors>> adjacencyList = G.edges;
 
     //Create a boolean array of all nodes to check if they are visited
     vector<bool> visited(numberOfNodes, false);
-    
-    //Create an array to hold the distance from the source node. Assign the max value by 
-    //default
-    vector<int> distanceFromSourceNode(numberOfNodes, 100);
-    
+
+    //Create an array to hold the distance from the explored set. Assign 
+    //the max value by default
+    vector<int> distanceFromExploredSet(numberOfNodes, 100);
+
     //Use a a 2d array where the 0 index of every element
     //is the node and the 1 index is the distance from the source
-    vector<vector<int>> priorityQueueOfDistanceFromSource;
-    
+    vector<vector<int>> priorityQueueOfDistanceFromExploredSet;
+
     //Push the source node into the priority queue
-    priorityQueueOfDistanceFromSource.push_back({sourceNode,0});
-    
-    //Initialize the distance of the source node to the source sourceNode
-    //to be 0
-    distanceFromSourceNode[sourceNode] = 0;
-    
-    //Loop as long as the priority queue exists
-    while(!priorityQueueOfDistanceFromSource.empty()) {
+    priorityQueueOfDistanceFromExploredSet.push_back({sourceNode,0});
+
+    distanceFromExploredSet[sourceNode] = 0;
+
+    vector<vector<neighbors>> adjacencyListOfMST(numberOfNodes, vector<neighbors>({}));
+
+    vector<int> backEndOfEdge(numberOfNodes,-1);
+
+    while (!priorityQueueOfDistanceFromExploredSet.empty())
+    {
         //Fetch the node with the minimum distance from the source node
-        vector<int> minPriorityItem = getMin(priorityQueueOfDistanceFromSource);
+        vector<int> minPriorityItem = getMin(priorityQueueOfDistanceFromExploredSet);
         int node = minPriorityItem[0];
         int weight = minPriorityItem[1];
-    
+
         //If this node has already been visited, skip this iteration
         if(visited[node])
             continue;
         //Otherwise, set the visited of this node to be true
         visited[node] = true;
-        
+        distanceFromExploredSet[node] = 0;
+
         //Loop through all the edges that this node is connected to
         for(int i = 0;i<adjacencyList[node].size();i++) {
             int otherNode = adjacencyList[node][i].node;
@@ -98,17 +100,32 @@ void shortestPathToEachNode(graph G, int sourceNode) {
             //current distance of the other node from the source, then set the sitance from
             //source of the other node to distance from the source of this node + the edge weight
             //to the other node. Then push it to the priority queue and restructure the heap.
-            if(distanceFromSourceNode[node] + edgeWeight < distanceFromSourceNode[otherNode]) {
-                distanceFromSourceNode[otherNode] =  distanceFromSourceNode[node] + edgeWeight;
-                priorityQueueOfDistanceFromSource.push_back({otherNode, distanceFromSourceNode[otherNode]});
-                heapifyUp(priorityQueueOfDistanceFromSource, priorityQueueOfDistanceFromSource.size()-1);
+            if(edgeWeight < distanceFromExploredSet[otherNode] && !visited[otherNode]) {
+                if(backEndOfEdge[otherNode] != -1) {
+                    int otherEdgeCurrentlyInMST = backEndOfEdge[otherNode];
+                    for(int j =0;j<adjacencyListOfMST[otherEdgeCurrentlyInMST].size();j++){
+                        if(adjacencyListOfMST[otherEdgeCurrentlyInMST][j].node == otherNode) {
+                            swap(adjacencyListOfMST[otherEdgeCurrentlyInMST][j], adjacencyListOfMST[otherEdgeCurrentlyInMST][adjacencyListOfMST[otherEdgeCurrentlyInMST].size()-1]);
+                            adjacencyListOfMST[otherEdgeCurrentlyInMST].resize(adjacencyListOfMST[otherEdgeCurrentlyInMST].size()-1);
+                        }
+                    }
+                }
+                backEndOfEdge[otherNode] = node;
+                distanceFromExploredSet[otherNode] =  edgeWeight;
+                neighbors treeNode = {otherNode,edgeWeight};
+                adjacencyListOfMST[node].push_back(treeNode);
+                priorityQueueOfDistanceFromExploredSet.push_back({otherNode, distanceFromExploredSet[otherNode]});
+                heapifyUp(priorityQueueOfDistanceFromExploredSet, priorityQueueOfDistanceFromExploredSet.size()-1);
             }
         }
     }
-    for(int i =0; i<distanceFromSourceNode.size();i++) {
-        cout<<"Node "<<i<<" Distance from source - "<<distanceFromSourceNode[i]<<endl;
+
+    for(int i =0; i<adjacencyListOfMST.size();i++) {
+        cout<<"Node "<<i<<" - ";
+        for (int j=0;j<adjacencyListOfMST[i].size();j++)
+            cout<<adjacencyListOfMST[i][j].node<<",";
+        cout<<endl;
     }
-    
 }
 
 int main() {
@@ -129,6 +146,6 @@ int main() {
     int numOfVertices = 9;
     vector<int> degree = {2,2,3,1,1,2,2,2,1};
     graph G = {adjacencyList, degree, numOfEdges, numOfVertices};
-    shortestPathToEachNode(G,0);
+    primsMinimumSpanningTree(G, 0);
     return 0;
 }
