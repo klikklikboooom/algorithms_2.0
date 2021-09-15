@@ -96,15 +96,18 @@ void primsMinimumSpanningTree (graph G, int sourceNode) {
         for(int i = 0;i<adjacencyList[node].size();i++) {
             int otherNode = adjacencyList[node][i].node;
             int edgeWeight = adjacencyList[node][i].weight;
-            //If the distance of this node from the source + the weight is lesser than the 
-            //current distance of the other node from the source, then set the sitance from
-            //source of the other node to distance from the source of this node + the edge weight
+            //If the distance of this node from the explored set + the weight is lesser than the 
+            //current distance of the other node from the explored set, check if the node 
+            //neighboring the other node already has a vertex in the current instance of the MST. 
+            //If it does, then delete that edge from the MST. After this, set the distance from
+            //explored set of the other node to distance from the source of this node + the edge weight
             //to the other node. Then push it to the priority queue and restructure the heap.
             if(edgeWeight < distanceFromExploredSet[otherNode] && !visited[otherNode]) {
                 if(backEndOfEdge[otherNode] != -1) {
                     int otherEdgeCurrentlyInMST = backEndOfEdge[otherNode];
                     for(int j =0;j<adjacencyListOfMST[otherEdgeCurrentlyInMST].size();j++){
                         if(adjacencyListOfMST[otherEdgeCurrentlyInMST][j].node == otherNode) {
+                            //Swap the current element with the last element and then delete the last element(Now the current element)
                             swap(adjacencyListOfMST[otherEdgeCurrentlyInMST][j], adjacencyListOfMST[otherEdgeCurrentlyInMST][adjacencyListOfMST[otherEdgeCurrentlyInMST].size()-1]);
                             adjacencyListOfMST[otherEdgeCurrentlyInMST].resize(adjacencyListOfMST[otherEdgeCurrentlyInMST].size()-1);
                         }
@@ -142,7 +145,7 @@ int main() {
         {{2,2},{6,6},{7,7}}
     };
 
-    int numOfEdges = 8;
+    int numOfEdges = 14;
     int numOfVertices = 9;
     vector<int> degree = {2,2,3,1,1,2,2,2,1};
     graph G = {adjacencyList, degree, numOfEdges, numOfVertices};

@@ -125,7 +125,7 @@ int main() {
         {}
     };
 
-    int numOfEdges = 8;
+    int numOfEdges = 14;
     int numOfVertices = 9;
     vector<int> degree = {2,2,3,1,1,2,2,2,1};
     graph G = {adjacencyList, degree, numOfEdges, numOfVertices};
