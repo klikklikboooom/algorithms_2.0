@@ -5,13 +5,13 @@
 using namespace std;
 
 double recursivelyMultiply(int a, int b) {
-
+    //Base case
     if(a<10 || b < 10)
         return a*b;
     int aCopy = a, bCopy = b;
     int aLen = 0;
     int bLen = 0;
-    
+    //Find the length of each of the numbers (number of digits)
     while(aCopy > 1){
         aLen++;
         aCopy = aCopy/10;
@@ -21,9 +21,11 @@ double recursivelyMultiply(int a, int b) {
         bLen++;
         bCopy = bCopy/10;
     }
+
     int halfALen = aLen/2;
     int halfBLen = bLen/2;
 
+    //Fetch the left half and right half of each number
     int aDivider = pow(10, halfALen);
     int leftHalfOfA = a/aDivider;
     int rightHalfOfA = a%aDivider;
@@ -35,6 +37,7 @@ double recursivelyMultiply(int a, int b) {
     double leftHalfOfBothProduct = recursivelyMultiply(leftHalfOfA, leftHalfOfB);
     double rightHalfOfBothProduct = recursivelyMultiply(rightHalfOfA, rightHalfOfB);
     
+    //The middle term can be calculated using the intermediate product 
     return (leftHalfOfBothProduct*pow(10,aLen) + (intermediateProduct - leftHalfOfBothProduct - rightHalfOfBothProduct)*pow(10, aLen/2) + rightHalfOfBothProduct);
 }
 

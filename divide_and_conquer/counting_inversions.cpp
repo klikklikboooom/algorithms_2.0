@@ -27,6 +27,8 @@ int mergeAndCount(vector<int> &array, int low, int mid, int high) {
         } else {
             array[indexOfMergedArray] = rightArray[rightArrayIterator];
             rightArrayIterator++;
+            //Add the all the remaining elements on the left side if the right side 
+            //element is greater
             inversionCount += leftArraySize - leftArrayIterator;
         }
         indexOfMergedArray++;

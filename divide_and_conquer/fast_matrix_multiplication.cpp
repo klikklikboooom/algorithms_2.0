@@ -4,6 +4,7 @@
 
 using namespace std;
 
+/* Create 2x2 matrix given an nxn matrix */
 pair<vector<vector<int>> , vector<vector<int>>> createSubMatrix(vector<vector<int>> a, vector<vector<int>> b, int startingI, int startingJ) {
     int halfSize = a.size()/2;
     vector<vector<int>> subMatrixOfA(halfSize);
@@ -19,6 +20,7 @@ pair<vector<vector<int>> , vector<vector<int>>> createSubMatrix(vector<vector<in
     return {subMatrixOfA, subMatrixOfB};
 }
 
+/*Add 2 matrices */
 vector<vector<int>> matrixAddition(vector<vector<int>> a, vector<vector<int>> b) {
     vector<vector<int>> sum(a.size());
     for(int i =0;i<a.size();i++)
@@ -28,6 +30,7 @@ vector<vector<int>> matrixAddition(vector<vector<int>> a, vector<vector<int>> b)
     return sum;
 }
 
+/*Subtract one matrix from the other */
 vector<vector<int>> matrixSubtraction(vector<vector<int>> a, vector<vector<int>> b) {
     vector<vector<int>> difference(a.size());
     for(int i =0;i<a.size();i++)
@@ -37,12 +40,14 @@ vector<vector<int>> matrixSubtraction(vector<vector<int>> a, vector<vector<int>>
     return difference;
 }
 
+/* Multiply using Strassen's formula */
 vector<vector<int>> strassensMultiplication(vector<vector<int>> a, vector<vector<int>> b) {
     if (a.size() == 1 && a[0].size() == 1)
         return {{a[0][0] *b[0][0]}};
 
     vector<pair<vector<vector<int>>, vector<vector<int>>>> subMatrices;
     int aHalfLen = a.size()/2;
+    
     for(int i=0;i<a.size();i+=aHalfLen){
         for(int j=0;j<a.size();j+=aHalfLen) {
             pair<vector<vector<int>>, vector<vector<int>>> subMatrix = createSubMatrix(a,b,i,j);
@@ -50,6 +55,7 @@ vector<vector<int>> strassensMultiplication(vector<vector<int>> a, vector<vector
         }
     }
 
+    // STRASSEN'S FORMULA
     vector<vector<int>> p1Matrix = strassensMultiplication(subMatrices[0].first, matrixSubtraction(subMatrices[1].second, subMatrices[3].second));
     vector<vector<int>> p2Matrix = strassensMultiplication(matrixAddition(subMatrices[0].first, subMatrices[1].first), subMatrices[3].second);
     vector<vector<int>> p3Matrix = strassensMultiplication(matrixAddition(subMatrices[2].first, subMatrices[3].first), subMatrices[0].second);

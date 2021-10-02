@@ -2,6 +2,7 @@
 #include<vector>
 
 using namespace std;
+/*Partition main list into n/s parts */
 vector<vector<int>> partitionList(vector<int> list, int numPartitions) {
     int sizeOfList = list.size();
     int partitionSize = sizeOfList/numPartitions;
@@ -43,17 +44,20 @@ void sortList(vector<int> &list, int low, int high) {
 }
 
 int kthLargestElement(vector<int> list, int k) {
+    //Base case
     if(list.size() <= 5) {
         vector<int> copyOfList = list;
         sortList(copyOfList, 0, copyOfList.size()-1);
         return copyOfList[copyOfList.size() - k];
     }
     
+    //Partition the list
     int numPartitions = 5;
     vector<vector<int>> partitionedLists = partitionList(list, numPartitions);
     vector<int> medians;
     int sizeOfPartition = list.size()/numPartitions;
     
+    //Find the median of each partitioned list and then find the median of the list of medians
     for(int i =0;i<partitionedLists.size();i++) {
         //Since we are recursively calling this function to find medians, find the k value 
         //for the median element
@@ -69,6 +73,9 @@ int kthLargestElement(vector<int> list, int k) {
     int kForMedianOfMedians = medians.size()/2 + 1;
     int medianOfMedians = kthLargestElement(medians, kForMedianOfMedians);
     vector<int> leftSide, rightSide;
+
+    //Traverse the list and check if each element is lesser than or greater than the 
+    //median of medians. If it is les, put it in the left side, otherwise right side
     for(int i =0;i<list.size();i++) {
         if(list[i] < medianOfMedians)
             leftSide.push_back(list[i]);
