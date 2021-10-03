@@ -55,6 +55,7 @@ void merge(vector<pair<int,int>> &array, int low, int mid, int high, int option)
     }
 }
 
+/* Sort all points by a given axis (option represents which axis)*/
 void mergeSort(vector<pair<int,int>> &array, int low, int high, int option) {
     if(low>=high)
         return;
@@ -65,13 +66,16 @@ void mergeSort(vector<pair<int,int>> &array, int low, int high, int option) {
     merge(array,low,mid,high, option);
 }
 
+/*Calculate the Euclidean distance between 2 points */
 double distanceBetweenPoints (pair<int,int> firstPoint, pair<int, int> secondPoint) {
     return sqrt(pow((firstPoint.first - secondPoint.first),2) + pow((firstPoint.second - secondPoint.second),2));
 }
 
+/* Find the closest pair of points recursively */
 pair<pair<int,int>, pair<int,int>> recursivelyFindClosestPair(vector<pair<int,int>> pointsSortedByX, vector<pair<int,int>> pointsSortedByY) {
     pair<pair<int,int>, pair<int,int>> closestPairOfPoints;
     
+    //Base case, if there are 3 points, compare each pair and find the hortest pair
     if(pointsSortedByX.size() <=3) {
         double minDistance = 10000000000;
         for(int i=0;i<3;i++){
@@ -91,6 +95,7 @@ pair<pair<int,int>, pair<int,int>> recursivelyFindClosestPair(vector<pair<int,in
     vector<pair<int,int>> rightSidePointsSortedByX;
     vector<pair<int,int>> rightSidePointsSortedByY;
 
+    // Create the left and right side of points sorted by x and y each
     for(int i =0; i<=mid;i++)
         leftSidePointsSortedByX.push_back(pointsSortedByX[i]);
 
@@ -105,13 +110,16 @@ pair<pair<int,int>, pair<int,int>> recursivelyFindClosestPair(vector<pair<int,in
             rightSidePointsSortedByY.push_back(thisPoint);
     }
 
+    //Recursively find the closest pair of points on the right and left side
     pair<pair<int,int>, pair<int,int>> leftSideClosestPair = recursivelyFindClosestPair(leftSidePointsSortedByX, leftSidePointsSortedByY);
     pair<pair<int,int>, pair<int,int>> rightSideClosestPair = recursivelyFindClosestPair(rightSidePointsSortedByX, rightSidePointsSortedByY);
 
+    //Calculate delta, the smaller of the shortest distance on the left and right sides
     double leftSideClosestDistance = distanceBetweenPoints(leftSideClosestPair.first, leftSideClosestPair.second);
     double rightSideClosestDistance = distanceBetweenPoints(rightSideClosestPair.first, rightSideClosestPair.second);
     double delta = min(leftSideClosestDistance, rightSideClosestDistance);
     closestPairOfPoints = delta == leftSideClosestDistance? leftSideClosestPair: rightSideClosestPair;
+
 
     vector<pair<int, int>> pointsWithinDeltaOfVerticalLineDivider;
     for(int i =0;i< pointsSortedByY.size();i++)
@@ -120,7 +128,7 @@ pair<pair<int,int>, pair<int,int>> recursivelyFindClosestPair(vector<pair<int,in
 
     int windowForMinDistance = 15;
 
-
+    //Compare with next 15 points, the shortest distance must be between them
     for(int i =0;i<pointsWithinDeltaOfVerticalLineDivider.size();i++) {
         int loopingTerminator;
         if(i+15 < pointsWithinDeltaOfVerticalLineDivider.size())

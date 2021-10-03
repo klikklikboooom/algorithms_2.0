@@ -40,6 +40,34 @@ vector<vector<int>> matrixSubtraction(vector<vector<int>> a, vector<vector<int>>
     return difference;
 }
 
+/*Merge two matrices row wise */
+vector<vector<int>> rowWiseMerge(vector<vector<int>> a, vector<vector<int>> b) {
+    int rows = a.size();
+    int columns = a[0].size();
+    vector<vector<int>> c(rows, vector<int>(2*columns));
+    for(int i = 0;i<rows;i++) {
+        for(int j =0;j<columns;j++) {
+            c[i][j] = a[i][j];
+            c[i][j+columns] = b[i][j];
+        }
+    }
+    return c;
+}
+
+/*Merge two matrices column wise */
+vector<vector<int>> columnWiseMerge(vector<vector<int>> a, vector<vector<int>> b) {
+    int rows = a.size();
+    int columns = a[0].size();
+    vector<vector<int>> c(2*rows, vector<int>(columns));
+    for(int i = 0;i<rows;i++) {
+        for(int j =0;j<columns;j++) {
+            c[i][j] = a[i][j];
+            c[i+rows][j] = b[i][j];
+        }
+    }
+    return c;
+}
+
 /* Multiply using Strassen's formula */
 vector<vector<int>> strassensMultiplication(vector<vector<int>> a, vector<vector<int>> b) {
     if (a.size() == 1 && a[0].size() == 1)
@@ -63,13 +91,15 @@ vector<vector<int>> strassensMultiplication(vector<vector<int>> a, vector<vector
     vector<vector<int>> p5Matrix = strassensMultiplication(matrixAddition(subMatrices[0].first, subMatrices[3].first), matrixAddition(subMatrices[0].second, subMatrices[3].second));
     vector<vector<int>> p6Matrix = strassensMultiplication(matrixSubtraction(subMatrices[1].first, subMatrices[3].first), matrixSubtraction(subMatrices[2].second, subMatrices[3].second));
     vector<vector<int>> p7Matrix = strassensMultiplication(matrixSubtraction(subMatrices[0].first, subMatrices[2].first), matrixAddition(subMatrices[0].second, subMatrices[1].second));
-    
-    vector<vector<int>> productMatrix(2, vector<int>(2));
-    productMatrix[0][0] = p5Matrix[0][0] + p4Matrix[0][0] - p2Matrix[0][0] + p6Matrix[0][0];
-    productMatrix[0][1] = p1Matrix[0][0] + p2Matrix[0][0];
-    productMatrix[1][0] = p3Matrix[0][0] + p4Matrix[0][0];
-    productMatrix[1][1] = p1Matrix[0][0] + p5Matrix[0][0] - p3Matrix[0][0] - p7Matrix[0][0];
 
+    vector<vector<int>> productMatrix1 = matrixAddition(p6Matrix, matrixSubtraction(matrixAddition(p5Matrix, p4Matrix), p2Matrix));
+    vector<vector<int>> productMatrix2 = matrixAddition(p1Matrix, p2Matrix);
+    vector<vector<int>> productMatrix3 = matrixAddition(p3Matrix, p4Matrix);
+    vector<vector<int>> productMatrix4 = matrixSubtraction(matrixSubtraction(matrixAddition(p1Matrix, p5Matrix), p3Matrix), p7Matrix);
+
+    vector<vector<int>> top2Rows = rowWiseMerge(productMatrix1, productMatrix2);
+    vector<vector<int>> bottom2Rows = rowWiseMerge(productMatrix3, productMatrix4);
+    vector<vector<int>> productMatrix = columnWiseMerge(top2Rows, bottom2Rows);
     return productMatrix;
 }
 
