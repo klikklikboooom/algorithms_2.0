@@ -60,27 +60,33 @@ vector<int> scheduleJobs(vector<int> memo, vector<jobs> jobList, int index, vect
     }
 }
 
-pair<vector<int>,int> maxWeightAndSolution(vector<jobs> jobList) {
+pair<vector<int>,int> maxWeightAndSolution(vector<jobs> &jobList) {
     sortJobsOnFinishTime(jobList, 0, jobList.size()-1);
     vector<int> memo;
     for(int i = 0; i<jobList.size();i++) {
         if(i==0)
             memo.push_back(jobList[i].weight);
-        else 
-            memo.push_back(max(jobList[i].weight + memo[latestNonConflictingJob(jobList,i)], memo[i-1]));
+        else {
+            int p = latestNonConflictingJob(jobList,i);
+            if(p == -1)
+                memo.push_back(memo[i-1]);
+            else
+                memo.push_back(max(jobList[i].weight + memo[p], memo[i-1]));
+        }   
     }
         
     vector<int> scheduledJobs = scheduleJobs(memo, jobList, jobList.size()-1, {});
-    pair<vector<int>,int> finalSolution = {scheduledJobs, memo[memo.size()-1]};
+    int finalScheduledJob = scheduledJobs[scheduledJobs.size()-1];
+    pair<vector<int>,int> finalSolution = {scheduledJobs, memo[finalScheduledJob]};
     return finalSolution;
 } 
 
 int main() {
-    vector<jobs> jobList = {{3, 10, 20}, {1, 2, 50}, {6, 19, 100}, {2, 100, 200}};
+    vector<jobs> jobList = {{3, 10, 20}, {1, 2, 50}, {10, 99, 132}, {1, 100, 200}};
     pair<vector<int>,int> weightAndSchedule = maxWeightAndSolution(jobList);
     cout<<"Optimal Weight "<<weightAndSchedule.second<<endl;
     cout<<"Jobs"<<endl;
     for(int i =0;i<weightAndSchedule.first.size();i++)
-        cout<<weightAndSchedule.first[i]<<endl;
+        cout<<jobList[weightAndSchedule.first[i]].startTime<<","<<jobList[weightAndSchedule.first[i]].finishTime<<","<<jobList[weightAndSchedule.first[i]].weight<<endl;
     return 0;
 }
