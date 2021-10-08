@@ -35,11 +35,14 @@ void sortPointsByX(vector<point> &points, int low, int high) {
 
 vector<vector<double>> calculateErrorValues(vector<point> points, int newLineCost) {
     int num = points.size();
+    //Sort all the points in the x direction
     sortPointsByX(points, 0, points.size()-1);
     vector<int> cumulativeXY, cumulativeY, cumulativeX, cumulativeXSquared;
+    
     vector<vector<double>> errors(num , vector<double>(num)); 
 
     for(int j = 0; j< points.size();j++) {
+        //Calculate the sum of values in each iteration
         if(j == 0) {
             cumulativeX.push_back(points[j].x);
             cumulativeY.push_back(points[j].y);
@@ -52,16 +55,20 @@ vector<vector<double>> calculateErrorValues(vector<point> points, int newLineCos
             cumulativeXSquared.push_back(points[j].x*points[j].x + cumulativeXSquared[j-1]);
         }
         for(int i =0;i<=j;i++) {
+            //Interval is 'n' in the formula for the slope and intercept
             int interval = j-i+1;
             int xSum = cumulativeX[j] - cumulativeX[i-1];
             int ySum = cumulativeY[j] - cumulativeY[i-1];
             int xySum = cumulativeXY[j] - cumulativeXY[i-1];
             int xSquaredSum = cumulativeXSquared[j] - cumulativeXSquared[i-1];
 
+            //Calculate the slope and intercept for every i and j to calculate the error for
+            //every i and j
             double thisSlopeDenom = (interval*xSquaredSum) - (xSum*xSum);
             double thisSlope = thisSlopeDenom == 0? INF: (double)  ((interval*xySum) - (xSum*ySum))/ thisSlopeDenom;
             double thisIntercept = (ySum - thisSlope*xSum)/interval;
 
+            //Calculate th error for this i and j
             for(int k = i;k<=j;k++) {
                 double thisError = pow(points[k].y - (thisSlope*points[k].x) - thisIntercept,2);
                 errors[i][j] = thisError;
@@ -115,6 +122,6 @@ int leastSegmentedSquares(vector<point> points, int newLineCost) {
 }
 
 int main() {
-
+    
     return 0;
 }
