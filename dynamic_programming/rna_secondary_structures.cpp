@@ -61,7 +61,6 @@ int maxBasePairs(string rnaSequence) {
                 }
             }
             memo[i][j] = max(memo[i][j-1], maxPairMemoCount);
-            cout<<"nothing";
         }
     }
     return memo[1][length];

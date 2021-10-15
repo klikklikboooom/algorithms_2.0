@@ -4,6 +4,14 @@
 
 using namespace std;
 
+typedef struct graphNeighbors{
+    int row, column, weight;
+} graphNeighbors;
+
+typedef struct path {
+    int row, column;
+} path;
+
 /*Calculate what the mismatch penalty should be 
 If one character is a consonant and one is a vowel
 or vice versa, the penalty is 3. If both are consonants 
@@ -28,6 +36,7 @@ int calculateMatchingPenalty(char a, char b) {
 
 int findSmallestPenalty(string a, string b) {
     vector<vector<int>> memo(a.length()+1, vector<int>(b.length()+1));
+    vector<vector<int>> shortestPaths(a.length()+1, vector<int>(b.length()+1));
     int gapPenalty = 2;
     for(int i =0; i <= a.length();i++)
         memo[i][0] = gapPenalty*i;
@@ -40,9 +49,9 @@ int findSmallestPenalty(string a, string b) {
             int mismatchPenalty = calculateMatchingPenalty(a[i-1], b[j-1]);
             int tempMin = min(mismatchPenalty + memo[i-1][j-1], gapPenalty + memo[i-1][j]);
             memo[i][j] = min(tempMin, gapPenalty + memo[i][j-1]);
-            cout<<"nothing";
         }
-    } 
+    }
+ 
     return memo[a.length()][b.length()];    
 }
 
