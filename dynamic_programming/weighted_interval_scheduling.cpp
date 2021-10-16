@@ -46,6 +46,7 @@ void sortJobsOnFinishTime(vector<jobs> &jobList, int low, int high) {
     }   
 }
 
+/* Recursive method to schedule all the jobs */
 vector<int> scheduleJobs(vector<int> memo, vector<jobs> jobList, int index, vector<int> scheduledJobs) {
     if(index == -1)
         return {};
@@ -64,9 +65,12 @@ pair<vector<int>,int> maxWeightAndSolution(vector<jobs> &jobList) {
     sortJobsOnFinishTime(jobList, 0, jobList.size()-1);
     vector<int> memo;
     for(int i = 0; i<jobList.size();i++) {
+        //Push the first job into the memo
         if(i==0)
             memo.push_back(jobList[i].weight);
         else {
+            //otherwise, find the max of the previous memo index and the 
+            // this memo's value + this jobs weight
             int p = latestNonConflictingJob(jobList,i);
             if(p == -1)
                 memo.push_back(memo[i-1]);
@@ -74,7 +78,7 @@ pair<vector<int>,int> maxWeightAndSolution(vector<jobs> &jobList) {
                 memo.push_back(max(jobList[i].weight + memo[p], memo[i-1]));
         }   
     }
-        
+    
     vector<int> scheduledJobs = scheduleJobs(memo, jobList, jobList.size()-1, {});
     int finalScheduledJob = scheduledJobs[scheduledJobs.size()-1];
     pair<vector<int>,int> finalSolution = {scheduledJobs, memo[finalScheduledJob]};

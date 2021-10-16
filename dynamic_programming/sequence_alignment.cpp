@@ -36,16 +36,17 @@ int calculateMatchingPenalty(char a, char b) {
 
 int findSmallestPenalty(string a, string b) {
     vector<vector<int>> memo(a.length()+1, vector<int>(b.length()+1));
-    vector<vector<int>> shortestPaths(a.length()+1, vector<int>(b.length()+1));
     int gapPenalty = 2;
+
+    //For all 0 indices, the memo value wil i*gapPenalty
     for(int i =0; i <= a.length();i++)
         memo[i][0] = gapPenalty*i;
 
     for(int i =0; i <= b.length();i++)
         memo[0][i] = gapPenalty*i;
 
-    for(int i =1;i<=a.length();i++) {
-        for(int j =1; j<=b.length();j++) {
+    for(int j =1;j<=b.length();j++) {
+        for(int i =1; i<=a.length();i++) {
             int mismatchPenalty = calculateMatchingPenalty(a[i-1], b[j-1]);
             int tempMin = min(mismatchPenalty + memo[i-1][j-1], gapPenalty + memo[i-1][j]);
             memo[i][j] = min(tempMin, gapPenalty + memo[i][j-1]);

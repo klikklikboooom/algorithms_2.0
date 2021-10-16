@@ -9,8 +9,11 @@ typedef struct item {
 
 pair<int, vector<int>> findoptimalSubset(vector<item> items, int knapsackWeight) {
     vector<vector<int>> weightItemValueMemo(items.size()+1, vector<int>(knapsackWeight+1));
+    
+    //Set the 0 index values to 0
     for(int j=0;j<=knapsackWeight;j++)
         weightItemValueMemo[0][j] = 0;
+
 
     for(int i =1;i<=items.size();i++) {
         for(int j=1;j<=knapsackWeight;j++) {

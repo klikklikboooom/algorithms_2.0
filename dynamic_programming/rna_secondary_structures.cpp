@@ -36,6 +36,7 @@ int maxBasePairs(string rnaSequence) {
             if((j-i) <= 4)
                 memo[i][j] = 0;
 
+    //Start from 5 because of no sharp turns property
     for(int k = 5; k <= length;k++) {
         for(int i =1;i<=(length-k);i++) {
             map<char, int>::iterator it;
