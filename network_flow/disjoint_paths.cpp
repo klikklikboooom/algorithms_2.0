@@ -25,7 +25,7 @@ bool bfs(vector<vector<neighbors>> residualGraph, int s, int t) {
             neighbors otherNode = residualGraph[u][i];
             if(visited[otherNode.node] == false && otherNode.weight > 0) {
                 parent[otherNode.node] = u;
-                if(otherNode.node == t) 
+                if(otherNode.node == t)
                     return true;
 
                 q.push(otherNode.node);
@@ -89,19 +89,26 @@ int fordFulkersons(vector<vector<neighbors>> graph, int s, int t) {
     return maxFlow;
 }
 
+vector<vector<neighbors>> generateGraphWithCapacity(vector<vector<int>> graph) {
+    vector<vector<neighbors>> graphwithUnitCapacity(graph.size());
+    for(int i =0;i<graph.size();i++) {
+        graphwithUnitCapacity[i] = {};
+        for(int j =0;j<graph[i].size();j++)
+            graphwithUnitCapacity[i].push_back({graph[i][j], 1});
+    }
+    return graphwithUnitCapacity;
+}
+
 
 int main() {
 
-    vector<vector<neighbors>> graph = {
-        {{1, 16}, {2,13}},
-        {{2,10}, {3,12}},
-        {{1,4}, {4,14}},
-        {{2,9}, {5,20}},
-        {{3,7}, {5,4}},
-        {}
+    vector<vector<int>> graph = {
+        {1,2,3}, {2}, {6}, {6}, {2,7}, {1,4,7}, {5,7},{}
     };
 
-    cout << "The maximum possible flow is "
-         << fordFulkersons(graph, 0, 5)<<endl;
+    vector<vector<neighbors>> graphwithUnitCapacity = generateGraphWithCapacity(graph);
+
+    cout << "The maximum number of disjoint paths is "
+         << fordFulkersons(graphwithUnitCapacity, 0, 7)<<endl;
     return 0;
 }
