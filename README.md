@@ -28,7 +28,7 @@
  1. [Weighted Interval Scheduling](dynamic_programming/weighted_interval_scheduling.cpp)
  2. [Least Segmented Squares](dynamic_programming/least_segmented_squares.cpp)
  3. [Knapsack](dynamic_programming/knapsack.cpp)
- 4. [RNA Secondary Structure]((dynamic_programming/rna_secondary_structure.cpp)
+ 4. [RNA Secondary Structure](dynamic_programming/rna_secondary_structure.cpp)
  5. [Sequence Alignment](dynamic_programming/sequence_alignment.cpp)
  6. [Bellman Ford's Algorithm](dynamic_programming/bellman_fords_algorithm.cpp)
  7. [Asynchronous Bellman Ford's Algorithm](dynamic_programming/asynchronous_bellman_fords.cpp)
