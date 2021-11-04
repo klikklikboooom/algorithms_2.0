@@ -142,18 +142,20 @@ int scalingMaxFlow(vector<vector<neighbors>> graph, int s, int t) {
 
 int findMaxMatching(vector<vector<neighbors>> bipartiteGraph, vector<int> X, vector<int> Y) {
     vector<vector<neighbors>> maxFlowGraph(X.size() + Y.size() + 2);
+    //Since the source of the new graph is 0, we need to increment all the nodes by 1
     for(int i =0;i<X.size();i++) {
-        maxFlowGraph[0].push_back({X[i], 1});
+        maxFlowGraph[0].push_back({X[i]+1, 1});
         for(int j =0;j<bipartiteGraph[X[i]].size();j++) {
-            maxFlowGraph[X[i]].push_back({bipartiteGraph[X[i]][j].node, bipartiteGraph[X[i]][j].weight});
+            maxFlowGraph[X[i]+1].push_back({bipartiteGraph[X[i]][j].node+1, bipartiteGraph[X[i]][j].weight});
         }
     }
+
 
     int sink = X.size() + Y.size() + 1;
 
     for(int i =0; i<Y.size();i++)
-        maxFlowGraph[Y[i]].push_back({sink, 1});
-        
+        maxFlowGraph[Y[i]+1].push_back({sink, 1});
+
     int maxFlow = scalingMaxFlow(maxFlowGraph, 0, sink);
     return maxFlow;
 }
@@ -177,7 +179,7 @@ int main() {
     vector<int> X = {0,1,2,3,4};
     vector<int> Y = {5,6,7,8,9};
 
-    cout << "The maximum possible flow is "
+    cout << "The maximum possible fmatching is "
          << findMaxMatching(bipartiteInputGraph, X, Y)<<endl;
     return 0;
 }

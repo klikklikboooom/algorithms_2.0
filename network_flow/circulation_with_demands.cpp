@@ -1,6 +1,7 @@
 #include<iostream>
 #include<vector>
 #include<queue>
+#include<cmath>
 
 using namespace std;
 
@@ -73,7 +74,7 @@ int fordFulkersons(vector<vector<neighbors>> graph, int s, int t) {
             }
 
             for(int j = 0;j < residualGraph[i].size(); j++) {
-                if(residualGraph[i][j].node == parentNode) {
+                if(residualGraph[i][j].node == i) {
                     residualGraph[i][j].weight += thisBottleneck; 
                     backwardPathExists = true;
                 }
@@ -86,21 +87,75 @@ int fordFulkersons(vector<vector<neighbors>> graph, int s, int t) {
         maxFlow += thisBottleneck;
     }
 
+    // for(int i =0;i<residualGraph.size();i++) {
+    //     for(int j =0;j<residualGraph[i].size();j++) {
+    //         cout<<residualGraph[i][j].node<<","<<residualGraph[i][j].weight<<" , ";
+    //     }
+    //     cout<<endl;
+    // }
+
     return maxFlow;
+}
+
+bool checkCirculation(vector<pair<int,vector<neighbors>>> graph) {
+    int sum = 0;
+    for(int i =0;i<graph.size();i++)
+        sum += graph[i].first;
+    
+    if(sum != 0)
+        return false;
+    // for(int i =0;i<graph.size();i++) {
+    //     int outSum =0, inSum = 0;
+    //     for(int j = 0; j<graph[i].second.size();j++)
+    //         outSum += graph[i].second[j].weight;
+
+    //     for(int j =1;j<graph.size();j++) {
+    //         for(int k =0;k<graph[(i+j)%graph.size()].second.size();k++) {
+    //             if(graph[(i+j)%graph.size()].second[k].node == i)
+    //                 inSum +=
+    //         }
+    //     } 
+    // }
+    return true;
+}
+
+vector<vector<neighbors>> reconstructGraph(vector<pair<int,vector<neighbors>>> graph) {
+     
+    vector<vector<neighbors>> modifiedCirculationGraph(graph.size() + 2);
+    int sink = modifiedCirculationGraph.size()-1;
+    for(int i =0; i< graph.size();i++) {
+        if(graph[i].first < 0)
+            modifiedCirculationGraph[0].push_back({i+1, -(graph[i].first)});
+        else if (graph[i].first > 0) 
+            modifiedCirculationGraph[i+1].push_back({sink, graph[i].first});
+        for(int j = 0;j<graph[i].second.size();j++)
+            modifiedCirculationGraph[i+1].push_back({graph[i].second[j].node+1, graph[i].second[j].weight});
+    }
+    // for(int i =0;i<modifiedCirculationGraph.size();i++) {
+    //     for(int j = 0; j< modifiedCirculationGraph[i].size();j++) {
+    //         cout<<modifiedCirculationGraph[i][j].node<<","<<modifiedCirculationGraph[i][j].weight<<" , ";
+    //     }
+    //     cout<<endl;
+    // }
+    return modifiedCirculationGraph;
 }
 
 int main() {
 
-    vector<vector<neighbors>> graph = {
-        {{1, 16}, {2,13}},
-        {{2,10}, {3,12}},
-        {{1,4}, {4,14}},
-        {{2,9}, {5,20}},
-        {{3,7}, {5,4}},
-        {}
+    vector<pair<int,vector<neighbors>>> graph = {
+        {-8, {{3, 6}, {4,7}}},
+        {-6, {{3,7}, {5,9}}},
+        {-7, {{0,10}, {3,3}}},
+        {10, {}},
+        {0,  {{1,4},{5,4}}},
+        {11, {}}
     };
 
-    cout << "The maximum possible flow is "
-         << fordFulkersons(graph, 0, 5)<<endl;
+    if(checkCirculation(graph)) {
+    vector<vector<neighbors>> reconstructedGraph = reconstructGraph(graph);
+    cout << "The maximum possible circulation is "
+         << fordFulkersons(reconstructedGraph, 0, reconstructedGraph.size()-1)<<endl;
+    } else
+        cout<<"Circulation not feasible"<<endl;
     return 0;
 }
